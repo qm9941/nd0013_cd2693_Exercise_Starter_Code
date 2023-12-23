@@ -145,12 +145,12 @@ int main(){
 		if(new_scan){
 			auto scan = boost::static_pointer_cast<csd::LidarMeasurement>(data);
 	
-			Eigen::Matrix4d transform= Eigen::Matrix4d::Identity ();
-			// TODO: Set transform to pose using transform3D()
+			Eigen::Matrix4d transform = transform3D(pose.rotation.yaw, pose.rotation.pitch, pose.rotation.roll, pose.position.x, pose.position.y, pose.position.z);
+
 			for (auto detection : *scan){
 				if((detection.x*detection.x + detection.y*detection.y + detection.z*detection.z) > 8.0){ // Don't include points touching ego
 					Eigen::Vector4d local_point(detection.x, detection.y, detection.z, 1);
-					Eigen::Vector4d transform_point = local_point; // TODO: Multiply local_point by transform
+					Eigen::Vector4d transform_point = local_point * transform;
 					pclCloud.points.push_back(PointT(transform_point[0], transform_point[1], transform_point[2]));
 				}
 	
